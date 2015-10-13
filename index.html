@@ -4,11 +4,14 @@
 </head>
 <body>
 <h1>Sla<em>clone</em></h1>
-<section id="channels">
-  <input type="text" id="create_channel_field"><button onClick="channel_create($('#create_channel_field').val())">create channel</button>
+<div style="width: 15%; float: left">
+<input type="text" id="create_channel_field"><button onClick="channel_create($('#create_channel_field').val())">create channel</button>
+<ul id="channel_list"></ul>
+</div>
+<section id="channels" style="border: solid 1px red; width: 75%; margin-left: 17%">
 </section>
 <section id="chatarea">
-  <input type="text" id="chatfield"><select id="channel_selector"></select><button onClick="send_message($('#chatfield').val(), $('#channel_selector').val())">send</button>
+  <input type="text" id="chatfield" style="width:65%"><select id="channel_selector"></select><button onClick="send_message($('#chatfield').val(), $('#channel_selector').val())">send</button>
 </section>
 
 <script src="https://rawgit.com/bnorton/hookly.js/master/hookly.js"></script>
@@ -33,14 +36,17 @@ function channel_create(name) {
   // the dom element *is* the channel
   if(!document.getElementById('channel' + name)) {
     hookly.on(name, channel_callback(name))
-    $('#channels').append(channel_dom(name));
+    channel_dom(name);
     $('#channel_selector').append("<option value=" + name + ">" + name + "</option>");
     send_message(name, '#channels');
+    select_channel(document.getElementById('channel' + name));
   }
 }
 
 function channel_dom(name) {
-  return '<div id="channel' + name + '"><h2>' + name + '</h2></div>'
+  $('#channel_list').append('<li>' + name + '</li>');
+  $('#channels').append('<div id="channel' + name + '" style="border: solid 1px black; min-height: 100px"></div>');
+  
 }
 
 msg_id = 1;
@@ -50,11 +56,24 @@ function send_message(message, channel) {
   append_message(channel, message, true);
 }
 
+function select_channel(dom_elem) {
+  $('#channel_list li').css('background', 'white'); 
+  $('#channels div').hide(); 
+  $(document.getElementById('channel' + $(dom_elem).text())).show(); 
+  $(dom_elem).css('background', 'grey');
+  $("#channel_selector").val($(dom_elem).text());
+}
+
+$(function() {
 hookly.start("T8xqNNb1yRpUhSJvNEizsBVpDrfT-UyEYD3ENafogfmznG");
+
 
 channel_create('#channels');
 channel_create('#updates');
+select_channel($('#channel_list li').first());
 hookly.on('#channels', function(data) { channel_create(data.name) })
+$(document).on('click', '#channel_list li', function (event) {select_channel(event.target)} ); 
+});
 </script>
 </body>
 </html>
