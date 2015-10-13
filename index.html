@@ -16,8 +16,17 @@
 <script>
 function channel_callback(name) {
   return function callback(data) {
-    document.getElementById('channel'+name).innerHTML += data.name
+    console.log("message in channel: "+ name+ " - " +data);
+    append_message(name, data.name, false);
   }
+}
+
+function append_message(channel, message, self) {
+  dom = message
+  if(self) { dom = "<em>" + dom + "</em>" }
+  dom = "<p>" + dom + "</p>"
+  console.log("sending message to " + channel + ' ' + message)
+  document.getElementById('channel'+channel).innerHTML += dom
 }
 
 function channel_create(name) {
@@ -25,7 +34,7 @@ function channel_create(name) {
   if(!document.getElementById('channel' + name)) {
     hookly.on(name, channel_callback(name))
     $('#channels').append(channel_dom(name));
-    $('#channel_selector').append("<option>", {value: name}).text(name);
+    $('#channel_selector').append("<option value=" + name + ">" + name + "</option>");
     send_message(name, '#channels');
   }
 }
@@ -38,10 +47,13 @@ msg_id = 1;
 function send_message(message, channel) {
   // could do some fancy optional parameter here for the channel later
   hookly.notify(channel, {id: msg_id++, name: message } );
+  append_message(channel, message, true);
 }
 
-hookly.start("T8xqNNb1yRpUhSJvNEizsBVpDrfT-UyEYD3ENafogfmznG")
-channel_create('#updates')
+hookly.start("T8xqNNb1yRpUhSJvNEizsBVpDrfT-UyEYD3ENafogfmznG");
+
+channel_create('#channels');
+channel_create('#updates');
 hookly.on('#channels', function(data) { channel_create(data.name) })
 </script>
 </body>
