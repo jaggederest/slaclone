@@ -8,7 +8,7 @@
   <input type="text" id="create_channel_field"><button onClick="channel_create($('#create_channel_field').val())">create channel</button>
 </section>
 <section id="chatarea">
-  <input type="text" id="chatfield"><button onClick="send_message($('#chatfield').val(), $('#channel_selector').val())">send</button>
+  <input type="text" id="chatfield"><select id="channel_selector"></select><button onClick="send_message($('#chatfield').val(), $('#channel_selector').val())">send</button>
 </section>
 
 <script src="https://rawgit.com/bnorton/hookly.js/master/hookly.js"></script>
@@ -22,9 +22,10 @@ function channel_callback(name) {
 
 function channel_create(name) {
   // the dom element *is* the channel
-  if(!($('#channel' + name).length)) {
+  if(!document.getElementById('channel' + name)) {
     hookly.on(name, channel_callback(name))
     $('#channels').append(channel_dom(name));
+    $('#channel_selector').append("<option>", {value: name}).text(name);
     send_message(name, '#channels');
   }
 }
@@ -41,7 +42,7 @@ function send_message(message, channel) {
 
 hookly.start("T8xqNNb1yRpUhSJvNEizsBVpDrfT-UyEYD3ENafogfmznG")
 channel_create('#updates')
-hookly.on('#channels', function(data) { create_channel(data.name) })
+hookly.on('#channels', function(data) { channel_create(data.name) })
 </script>
 </body>
 </html>
