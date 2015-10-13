@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<section id="channels"></section>
+
+<section id="chatarea">
+  <input type="text" id="chatfield"><button onClick="hookly.notify('#updates', { id: 1538, name: document.getElementById('chatfield').value })">send</button>
+</section>
+
+<script src="https://rawgit.com/bnorton/hookly.js/master/hookly.js"></script>
+<script>
+hookly.start("T8xqNNb1yRpUhSJvNEizsBVpDrfT-UyEYD3ENafogfmznG")
+hookly.on('#updates', function(data) {
+  console.log(data);
+});
+</script>
+</body>
+</html>
