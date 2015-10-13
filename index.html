@@ -3,11 +3,12 @@
 <head>
 </head>
 <body>
+<h1>Sla<em>clone</em></h1>
 <section id="channels">
   <input type="text" id="create_channel_field"><button onClick="channel_create($('#create_channel_field').val())">create channel</button>
 </section>
 <section id="chatarea">
-  <input type="text" id="chatfield"><button onClick="hookly.notify('#updates', { id: 1538, name: $('#chatfield').val() })">send</button>
+  <input type="text" id="chatfield"><button onClick="send_message($('#chatfield').val(), $('#channel_selector').val())">send</button>
 </section>
 
 <script src="https://rawgit.com/bnorton/hookly.js/master/hookly.js"></script>
@@ -20,10 +21,22 @@ function channel_callback(name) {
 }
 
 function channel_create(name) {
-  hookly.on(name, channel_callback(name))
-  if(!($('#channel' + name).length))
-    $('#channels').append('<div id="channel' + name + '"></div>');
-  hookly.notify('#channels', { id: 1337, name: name })
+  // the dom element *is* the channel
+  if(!($('#channel' + name).length)) {
+    hookly.on(name, channel_callback(name))
+    $('#channels').append(channel_dom(name));
+    send_message(name, '#channels');
+  }
+}
+
+function channel_dom(name) {
+  return '<div id="channel' + name + '"><h2>' + name + '</h2></div>'
+}
+
+msg_id = 1;
+function send_message(message, channel) {
+  // could do some fancy optional parameter here for the channel later
+  hookly.notify(channel, {id: msg_id++, name: message } );
 }
 
 hookly.start("T8xqNNb1yRpUhSJvNEizsBVpDrfT-UyEYD3ENafogfmznG")
