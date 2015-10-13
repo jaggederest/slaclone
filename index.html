@@ -3,14 +3,21 @@
 <head>
 </head>
 <body>
-<section id="channels"></section>
-
+<section id="channels">
+  <input type="text" id="create_channel_field"><button onClick="hookly.on(document.getElementById('create_channel_field').value, channel_callback(document.getElementById('create_channel_field').value))">create channel</button>
+  <div id="channel#updates"></div>
+</section>
 <section id="chatarea">
   <input type="text" id="chatfield"><button onClick="hookly.notify('#updates', { id: 1538, name: document.getElementById('chatfield').value })">send</button>
 </section>
 
 <script src="https://rawgit.com/bnorton/hookly.js/master/hookly.js"></script>
 <script>
+function channel_callback(name) {
+  return function callback(data) {
+    document.getElementById('channel'+name).innerHTML += data.name
+  }
+}
 hookly.start("T8xqNNb1yRpUhSJvNEizsBVpDrfT-UyEYD3ENafogfmznG")
 hookly.on('#updates', function(data) {
   console.log(data);
